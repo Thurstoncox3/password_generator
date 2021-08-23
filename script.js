@@ -1,69 +1,76 @@
+const resultEl = document.getElementById('result');
+const lengthEl = document.getElementById('length');
+const uppercaseEl = document.getElementById('uppercase');
+const lowercaseEl = document.getElementById('lowercase');
+const numbersEl = document.getElementById('numbers');
+const symbolsEl = document.getElementById('symbols');
+const generateEl = document.getElementById('generate');
 
 
-var generateBtn = document.querySelector("#generate");
-var letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-var digits = "#0123456789";
-var specials = ("<>?:{|}+_(*)&^%$#@!-=][\;'./,");
-
-var passwordText = document.getElementById ("password");
-var length = document.getElementById ("length");
-var length = 12;
-var password = "";
-var possible = "";
-
-var stored = [];
-var hasLowerCase = false;
-var hasUpperCase = false;
-var hasNumber = false;
-var hasSpecials = false;
-
-function generatePassword(){
-    var length = 8;
-    var password = "";
-
-    hasLowerCase = confirm("Lower");
-    hasUpperCase = confirm("Upper");
-    hasNumber = confirm ("Number");
-    hasSpecials = confirm ("Specials");
-
-
-    if (letters){
-    var random = Math.floor(Math.random () * letters.length);
-    var selectedLetter = letters[random];
-    stored.push(selectedLetter);
-    possible = possible.concat(letters);
-    };
-    if (digits){
-        var random = Math.floor(Math.random () * digits.length);
-        var selectedDigit = digits[random];
-        stored.push(selectedDigit);
-        possible = possible.concat(digits);
-    };
-    if (specials){
-        var random = Math.floor(Math.random () * specials.length);
-        var selectedSpecial = specials[random];
-        stored.push(selectedSpecial);
-        possible = possible.concat(specials);
-    };
-
-    for (i = 0; i < length; i++) {
-        var random = letters(Math.floor(Math.random() * letters.length));
-        password += letters[random];
-    }
-
-    console.log(stored);
-    console.log(password);
-    console.log(possible);
-    return password;
+const randomFunc = {
+  lower: getRandomLower,
+  upper: getRandomUpper,
+  number: getRandomNumber,
+  Symbol: getRandomSymbol,
 };
+generateEl.addEventListener("click", () => {
+  const length = +lengthEl.value;
+  const hasLower= lowercaseEl.checked;
+  const hasUpper = uppercaseEl.checked;
+  const hasNumber = numbersEl.checked;
+  const hasSymbol = symbolsEl.checked;
+  
+  resultEl.innerText = generatePassword(
+    hasLower, hasNumber, hasUpper, hasSymbol);
+  
 
-function writePassword() {
-  var password = generatePassword();
-  var passwordText = document.getElementById("#password");
+  console.log(hasLower, hasNumber, hasUpper, hasSymbol);
 
-if (password) {
-  passwordText.value = password;
+});
+
+function generatePassword(lower, upper, number, symbol, length){
+  let generatedPassword = "";
+
+  const typesCount = lower + upper + number + symbolsEl;
+  console.log ("typlesCount:", typesCount);
+  const typesArr = [{lower}, {upper}, {number}, {symbol}].filter
+  (item => Object.values(item)[0]);
+
+  if(typesCount === 0){
+    return "";
   }
+  for(let i = 0; i < length; i += typesCount){
+    typesArr.forEach(type => {
+      const funcName = Object.keys(type)[0];
+      console.log("funcName: ", funcName)
+      generatedPassword += randomeFunc[funcName]();
+    })
+  }
+  const finalPassword = generatedPassword.slice(0, length);
+
+  return finalPassword;
+  
+}
+var generateBtn = document.querySelector("#generate");
+
+function getRandomLower() {
+  return String.fromCharCode(Math.floor(Math.random() * 26) + 97)
+};
+function getRandomUpper() {
+  return String.fromCharCode(Math.floor(Math.random() * 26) + 65)
+};
+function getRandomNumber() {
+  return String.fromCharCode(Math.floor(Math.random() * 10) + 48)
+};
+function getRandomSymbol() {
+  const symbol = "!@#$%^&*()_+}|{[\]\;'.?,";
+  return symbol [Math.floor(Math.random() * symbol.length)]
 };
 
-generateBtn.addEventListener("click", writePassword);
+console.log(getRandomNumber);
+console.log(getRandomLower);
+console.log(getRandomUpper);
+
+
+
+
